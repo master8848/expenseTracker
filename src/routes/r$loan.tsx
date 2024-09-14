@@ -1,68 +1,49 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useIncomeStore } from "@/app/incomeStore";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
 
-export const Route = createFileRoute("/income")({
-  component: App,
-});
-const minLimit = 1;
+export const Route = createFileRoute('/loan')({
+  component: App
+})
+
 const FormSchema = z.object({
-  Amount: z.number().min(minLimit, {
-    message: `Cannot spent less than ${minLimit} amount`,
-  }),
-  Catagory: z
-  .string()
-  .min(3, {
-    message: `length should be 3 letter`,
-  })
-  .max(50, "Max letter reached")
-  .nullable(),
-Date: z.string(),
-Description: z.string().nullable(),
+  to: z.string().min(1),
+  amount: z.number().positive(),
+  description: z.string().optional(),
+  returnDate: z.string(),
+  contact: z.string().optional(),
+ 
 });
+
+
 function App() {
-  const { addIncome } = useIncomeStore();
-  const navigate = useNavigate();
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-    
-      Date: new Date().toString(),
-    },
-  });
+  // const addExpense = useExpenseStore((c) => c.addExpense);
+  // const navigate = useNavigate();
+  // const form = useForm<z.infer<typeof FormSchema>>({
+  //   resolver: zodResolver(FormSchema),
+  //   defaultValues: {
+  //     Date: new Date().toString(),
+  //   },
+  // });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    addIncome({ amount: data.Amount,   time: new Date(),
-      catagory: data.Catagory || undefined,
-      description: data.Description || undefined,
-      date: data.Date, });
-
-    toast("Income added Sucessfully");
-    form.reset({ Amount: 0 });
-  }
+  // function onSubmit(data: z.infer<typeof FormSchema>) {
+  //   addExpense({
+  //     amount: data.Amount,
+  //     time: new Date(),
+  //     catagory: data.Catagory || undefined,
+  //     description: data.Description || undefined,
+  //     date: data.Date,
+  //   });
+  //   toast("Expense added Sucessfully");
+  //   form.reset({ Amount: 0 });
+  // }
 
   return (
-    <div className=" flex w-full h-full items-center justify-center bg-blue-200 dark:bg-blue-800">
+    <div className=" flex w-full h-full items-center justify-center bg-purple-200 dark:bg-purple-950">
       <div className="">
-        <h1 className="text-2xl mb-6">Register Income</h1>
-        <Form {...form}>
+        <h1 className="text-2xl mb-6">Register/Payment of Expense</h1>
+        {/* <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className=" grid gap-4 w-72"
@@ -84,13 +65,12 @@ function App() {
                       }
                     />
                   </FormControl>
-                  <FormDescription>Your Income For Today</FormDescription>
+                  <FormDescription>Your Expenses For Today</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-<FormField
+            <FormField
               control={form.control}
               name="Catagory"
               render={({ field }) => (
@@ -127,6 +107,7 @@ function App() {
                 </FormItem>
               )}
             />
+          
             <Button className="w-full" type="submit">
               Submit
             </Button>
@@ -136,12 +117,12 @@ function App() {
               type="submit"
               onClick={(ev) => {
                 ev.preventDefault();
-                navigate({ to: "/", from: "/income" });
+                navigate({ to: "/income", from: "/" });
               }}
             >
-              Register Expense
+              Register Income
             </Button>
-            
+
             <FormField
               control={form.control}
               name="Description"
@@ -161,7 +142,7 @@ function App() {
               )}
             />
           </form>
-        </Form>
+        </Form> */}
       </div>
     </div>
   );

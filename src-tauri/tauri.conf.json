@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "identifier": "com.expensetracker.app",
   "build": {
-    "devUrl": "http://192.168.160.1:1420",
+    "devUrl": "http://localhost:1420/",
+    "beforeDevCommand": "pnpm run dev",
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist"
   },
@@ -16,7 +17,7 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *"
     }
   },
   "bundle": {

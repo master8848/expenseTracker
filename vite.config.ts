@@ -1,11 +1,11 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { defineConfig } from "vite";
 
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 
-const host = process.env.TAURI_DEV_HOST;
-console.log(host);
+const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM);
+const host = mobile ? "0.0.0.0" : false;
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
   plugins: [

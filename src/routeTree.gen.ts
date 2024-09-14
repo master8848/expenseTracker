@@ -11,11 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/r$__root'
+import { Route as LoanImport } from './routes/r$loan'
 import { Route as IncomeImport } from './routes/r$income'
 import { Route as DashboardImport } from './routes/r$dashboard'
 import { Route as IndexImport } from './routes/r$index'
 
 // Create/Update Routes
+
+const LoanRoute = LoanImport.update({
+  path: '/loan',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IncomeRoute = IncomeImport.update({
   path: '/income',
@@ -57,6 +63,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IncomeImport
       parentRoute: typeof rootRoute
     }
+    '/loan': {
+      id: '/loan'
+      path: '/loan'
+      fullPath: '/loan'
+      preLoaderRoute: typeof LoanImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -66,12 +79,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/income': typeof IncomeRoute
+  '/loan': typeof LoanRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/income': typeof IncomeRoute
+  '/loan': typeof LoanRoute
 }
 
 export interface FileRoutesById {
@@ -79,14 +94,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/income': typeof IncomeRoute
+  '/loan': typeof LoanRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/income'
+  fullPaths: '/' | '/dashboard' | '/income' | '/loan'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/income'
-  id: '__root__' | '/' | '/dashboard' | '/income'
+  to: '/' | '/dashboard' | '/income' | '/loan'
+  id: '__root__' | '/' | '/dashboard' | '/income' | '/loan'
   fileRoutesById: FileRoutesById
 }
 
@@ -94,12 +110,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   IncomeRoute: typeof IncomeRoute
+  LoanRoute: typeof LoanRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   IncomeRoute: IncomeRoute,
+  LoanRoute: LoanRoute,
 }
 
 export const routeTree = rootRoute
@@ -116,7 +134,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/dashboard",
-        "/income"
+        "/income",
+        "/loan"
       ]
     },
     "/": {
@@ -127,6 +146,9 @@ export const routeTree = rootRoute
     },
     "/income": {
       "filePath": "r$income.tsx"
+    },
+    "/loan": {
+      "filePath": "r$loan.tsx"
     }
   }
 }

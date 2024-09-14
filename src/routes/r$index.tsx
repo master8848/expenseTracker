@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { useExpenseStore } from "@/app/expenseStore";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,17 +16,27 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useExpenseStore } from "@/app/expenseStore";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+
 export const Route = createFileRoute("/")({
   component: App,
 });
 
 const minLimit = 1;
 const FormSchema = z.object({
-  Ammount: z.number().min(minLimit, {
-    message: `Cannot spent less than ${minLimit} ammount`,
+  Amount: z.number().min(minLimit, {
+    message: `Cannot spent less than ${minLimit} amount`,
   }),
+  Catagory: z
+    .string()
+    .min(3, {
+      message: `length should be 3 letter`,
+    })
+    .max(50, "Max letter reached")
+    .nullable(),
+  Date: z.string(),
+  Description: z.string().nullable(),
 });
 function App() {
   const addExpense = useExpenseStore((c) => c.addExpense);
@@ -33,18 +44,24 @@ function App() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      Ammount: 0,
+      Date: new Date().toString(),
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    addExpense({ ammount: data.Ammount, time: new Date() });
+    addExpense({
+      amount: data.Amount,
+      time: new Date(),
+      catagory: data.Catagory || undefined,
+      description: data.Description || undefined,
+      date: data.Date,
+    });
     toast("Expense added Sucessfully");
-    form.reset({ Ammount: 0 });
+    form.reset({ Amount: 0 });
   }
 
   return (
-    <div className=" flex w-full h-[90vh] items-center justify-center">
+    <div className=" flex w-full h-full items-center justify-center bg-red-200 dark:bg-red-950">
       <div className="">
         <h1 className="text-2xl mb-6">Register Expense</h1>
         <Form {...form}>
@@ -54,10 +71,10 @@ function App() {
           >
             <FormField
               control={form.control}
-              name="Ammount"
+              name="Amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ammount</FormLabel>
+                  <FormLabel>Amount</FormLabel>
                   <FormControl>
                     <Input
                       autoFocus
@@ -74,6 +91,44 @@ function App() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="Catagory"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Catagory</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      {...field}
+                      value={field.value || ""}
+                    
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="Date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      {...field}
+                    
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          
             <Button className="w-full" type="submit">
               Submit
             </Button>
@@ -88,6 +143,25 @@ function App() {
             >
               Register Income
             </Button>
+
+            <FormField
+              control={form.control}
+              name="Description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      
+                      {...field}
+                    value={field.value||""}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </form>
         </Form>
       </div>

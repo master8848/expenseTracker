@@ -1,7 +1,8 @@
 import { create } from "zustand";
 
+import supabase from "@/utils/funcs/superbase";
 import { persist } from "zustand/middleware";
-import { ITranscationIdentity } from "./entity";
+import { ITranscationIdentity } from "../types/entity";
 
 interface incomeStoreType {
   incomes: ITranscationIdentity[];
@@ -12,8 +13,16 @@ export const useIncomeStore = create<incomeStoreType>()(
   persist(
     (set) => ({
       incomes: [],
-      addIncome: (toAddIncome) =>
-        set((state) => ({ incomes: [...state.incomes, toAddIncome] })),
+      addIncome: (toAddIncome) => {
+        supabase.from("expense").insert({
+          amount: toAddIncome.amount,
+          catagory: toAddIncome.catagory || "",
+          updated_at: Date().toString(),
+          date: new Date(toAddIncome.time).toString(),
+          description: toAddIncome.description,
+        });
+        set((state) => ({ incomes: [...state.incomes, toAddIncome] }));
+      },
     }),
     { name: "incomeValues" }
   )

@@ -1,11 +1,11 @@
+import { ITranscationIdentity } from "@/app/entity";
 import { useExpenseStore } from "@/app/expenseStore";
 import { useIncomeStore } from "@/app/incomeStore";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { DateTime } from "luxon";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ITranscationIdentity } from "@/app/entity";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { DateTime } from "luxon";
+import { useMemo } from "react";
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
@@ -18,7 +18,7 @@ function Dashboard() {
   const showExpense = useMemo(() => expensies.length !== 0, [expensies.length]);
   if (!showExpense && !showIncomes)
     return (
-      <div className="flex text-lg justify-center items-center h-[90vh]">
+      <div className="flex h-full text-lg justify-center items-center h-[90vh]">
         <div className="">
           Please add expenses or income
           <Link
@@ -37,15 +37,18 @@ function Dashboard() {
       </div>
     );
   return (
-    <div className="w-80  mx-auto my-10 grid gap-4">
+    <div className="w-80 h-full mx-auto my-10 grid gap-4">
       {showIncomes ? (
         <div className="bg-green-200  dark:bg-green-800 p-4  grid gap-4">
           Incomes:
           {incomes.map((c, i) => (
             <IndivisualEntry
-              ammount={c.ammount}
+              amount={c.amount}
               time={c.time}
-              key={c.ammount + "Income" + i}
+              key={c.amount + "Income" + i}
+              date={c.date}
+              description={c.description}
+              catagory={c.catagory}
             />
           ))}
         </div>
@@ -55,9 +58,12 @@ function Dashboard() {
           Incomes:
           {expensies.map((c, i) => (
             <IndivisualEntry
-              ammount={c.ammount}
+              amount={c.amount}
               time={c.time}
-              key={c.ammount + "Expense" + i}
+              key={c.amount + "Expense" + i}
+              date={c.date}
+              description={c.description}
+              catagory={c.catagory}
             />
           ))}
         </div>
@@ -66,7 +72,7 @@ function Dashboard() {
   );
 }
 
-function IndivisualEntry({ ammount, time }: ITranscationIdentity) {
+function IndivisualEntry({ amount, time }: ITranscationIdentity) {
   const formattedTime = useMemo(() => {
     const luxnDate = DateTime.fromJSDate(
       time instanceof Date ? time : new Date(time)
@@ -78,7 +84,7 @@ function IndivisualEntry({ ammount, time }: ITranscationIdentity) {
     <Card className="w-full py-5 relative">
       <CardContent>
         <Label>
-          Ammout={"> "}Rs {ammount}
+          Ammout={"> "}Rs {amount}
         </Label>
         <br />
         <span className="text-gray-600 text-xs absolute">{formattedTime}</span>
