@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 
 export function useToggle(
-  bool = false
+  bool = false,
 ): [
   boolean,
-  { setToggle: () => void; setFalse: () => void; setTrue: () => void }
+  { setToggle: () => void; setFalse: () => void; setTrue: () => void },
 ] {
   const [state, setState] = useState<boolean>(bool);
   const setToggle = useCallback(() => setState((c) => !c), [setState]);

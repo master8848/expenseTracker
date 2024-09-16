@@ -11,113 +11,224 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/r$__root'
-import { Route as LoanImport } from './routes/r$loan'
-import { Route as IncomeImport } from './routes/r$income'
-import { Route as DashboardImport } from './routes/r$dashboard'
-import { Route as IndexImport } from './routes/r$index'
+import { Route as transactionImport } from './routes/r$__transaction'
+import { Route as dashImport } from './routes/r$__dash'
+import { Route as transactionLoanImport } from './routes/r$__transaction/r$loan'
+import { Route as transactionIncomeImport } from './routes/r$__transaction/r$income'
+import { Route as dashDashloanImport } from './routes/r$__dash/r$dash_loan'
+import { Route as dashDashincomeImport } from './routes/r$__dash/r$dash_income'
+import { Route as dashDashexpenseImport } from './routes/r$__dash/r$dash_expense'
+import { Route as transactionIndexImport } from './routes/r$__transaction/r$index'
 
 // Create/Update Routes
 
-const LoanRoute = LoanImport.update({
+const transactionRoute = transactionImport.update({
+  id: '/__transaction',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const dashRoute = dashImport.update({
+  id: '/__dash',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const transactionLoanRoute = transactionLoanImport.update({
   path: '/loan',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => transactionRoute,
 } as any)
 
-const IncomeRoute = IncomeImport.update({
+const transactionIncomeRoute = transactionIncomeImport.update({
   path: '/income',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => transactionRoute,
 } as any)
 
-const DashboardRoute = DashboardImport.update({
-  path: '/dashboard',
-  getParentRoute: () => rootRoute,
+const dashDashloanRoute = dashDashloanImport.update({
+  path: '/dash_loan',
+  getParentRoute: () => dashRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const dashDashincomeRoute = dashDashincomeImport.update({
+  path: '/dash_income',
+  getParentRoute: () => dashRoute,
+} as any)
+
+const dashDashexpenseRoute = dashDashexpenseImport.update({
+  path: '/dash_expense',
+  getParentRoute: () => dashRoute,
+} as any)
+
+const transactionIndexRoute = transactionIndexImport.update({
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => transactionRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/__dash': {
+      id: '/__dash'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof dashImport
+      parentRoute: typeof rootRoute
+    }
+    '/__transaction': {
+      id: '/__transaction'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof transactionImport
+      parentRoute: typeof rootRoute
+    }
+    '/__transaction/': {
+      id: '/__transaction/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof transactionIndexImport
+      parentRoute: typeof transactionImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardImport
-      parentRoute: typeof rootRoute
+    '/__dash/dash_expense': {
+      id: '/__dash/dash_expense'
+      path: '/dash_expense'
+      fullPath: '/dash_expense'
+      preLoaderRoute: typeof dashDashexpenseImport
+      parentRoute: typeof dashImport
     }
-    '/income': {
-      id: '/income'
+    '/__dash/dash_income': {
+      id: '/__dash/dash_income'
+      path: '/dash_income'
+      fullPath: '/dash_income'
+      preLoaderRoute: typeof dashDashincomeImport
+      parentRoute: typeof dashImport
+    }
+    '/__dash/dash_loan': {
+      id: '/__dash/dash_loan'
+      path: '/dash_loan'
+      fullPath: '/dash_loan'
+      preLoaderRoute: typeof dashDashloanImport
+      parentRoute: typeof dashImport
+    }
+    '/__transaction/income': {
+      id: '/__transaction/income'
       path: '/income'
       fullPath: '/income'
-      preLoaderRoute: typeof IncomeImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof transactionIncomeImport
+      parentRoute: typeof transactionImport
     }
-    '/loan': {
-      id: '/loan'
+    '/__transaction/loan': {
+      id: '/__transaction/loan'
       path: '/loan'
       fullPath: '/loan'
-      preLoaderRoute: typeof LoanImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof transactionLoanImport
+      parentRoute: typeof transactionImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface dashRouteChildren {
+  dashDashexpenseRoute: typeof dashDashexpenseRoute
+  dashDashincomeRoute: typeof dashDashincomeRoute
+  dashDashloanRoute: typeof dashDashloanRoute
+}
+
+const dashRouteChildren: dashRouteChildren = {
+  dashDashexpenseRoute: dashDashexpenseRoute,
+  dashDashincomeRoute: dashDashincomeRoute,
+  dashDashloanRoute: dashDashloanRoute,
+}
+
+const dashRouteWithChildren = dashRoute._addFileChildren(dashRouteChildren)
+
+interface transactionRouteChildren {
+  transactionIndexRoute: typeof transactionIndexRoute
+  transactionIncomeRoute: typeof transactionIncomeRoute
+  transactionLoanRoute: typeof transactionLoanRoute
+}
+
+const transactionRouteChildren: transactionRouteChildren = {
+  transactionIndexRoute: transactionIndexRoute,
+  transactionIncomeRoute: transactionIncomeRoute,
+  transactionLoanRoute: transactionLoanRoute,
+}
+
+const transactionRouteWithChildren = transactionRoute._addFileChildren(
+  transactionRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/income': typeof IncomeRoute
-  '/loan': typeof LoanRoute
+  '': typeof transactionRouteWithChildren
+  '/': typeof transactionIndexRoute
+  '/dash_expense': typeof dashDashexpenseRoute
+  '/dash_income': typeof dashDashincomeRoute
+  '/dash_loan': typeof dashDashloanRoute
+  '/income': typeof transactionIncomeRoute
+  '/loan': typeof transactionLoanRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/income': typeof IncomeRoute
-  '/loan': typeof LoanRoute
+  '': typeof dashRouteWithChildren
+  '/': typeof transactionIndexRoute
+  '/dash_expense': typeof dashDashexpenseRoute
+  '/dash_income': typeof dashDashincomeRoute
+  '/dash_loan': typeof dashDashloanRoute
+  '/income': typeof transactionIncomeRoute
+  '/loan': typeof transactionLoanRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/income': typeof IncomeRoute
-  '/loan': typeof LoanRoute
+  '/__dash': typeof dashRouteWithChildren
+  '/__transaction': typeof transactionRouteWithChildren
+  '/__transaction/': typeof transactionIndexRoute
+  '/__dash/dash_expense': typeof dashDashexpenseRoute
+  '/__dash/dash_income': typeof dashDashincomeRoute
+  '/__dash/dash_loan': typeof dashDashloanRoute
+  '/__transaction/income': typeof transactionIncomeRoute
+  '/__transaction/loan': typeof transactionLoanRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/income' | '/loan'
+  fullPaths:
+    | ''
+    | '/'
+    | '/dash_expense'
+    | '/dash_income'
+    | '/dash_loan'
+    | '/income'
+    | '/loan'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/income' | '/loan'
-  id: '__root__' | '/' | '/dashboard' | '/income' | '/loan'
+  to:
+    | ''
+    | '/'
+    | '/dash_expense'
+    | '/dash_income'
+    | '/dash_loan'
+    | '/income'
+    | '/loan'
+  id:
+    | '__root__'
+    | '/__dash'
+    | '/__transaction'
+    | '/__transaction/'
+    | '/__dash/dash_expense'
+    | '/__dash/dash_income'
+    | '/__dash/dash_loan'
+    | '/__transaction/income'
+    | '/__transaction/loan'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
-  IncomeRoute: typeof IncomeRoute
-  LoanRoute: typeof LoanRoute
+  dashRoute: typeof dashRouteWithChildren
+  transactionRoute: typeof transactionRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
-  IncomeRoute: IncomeRoute,
-  LoanRoute: LoanRoute,
+  dashRoute: dashRouteWithChildren,
+  transactionRoute: transactionRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -132,23 +243,49 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "r$__root.tsx",
       "children": [
-        "/",
-        "/dashboard",
-        "/income",
-        "/loan"
+        "/__dash",
+        "/__transaction"
       ]
     },
-    "/": {
-      "filePath": "r$index.tsx"
+    "/__dash": {
+      "filePath": "r$__dash.tsx",
+      "children": [
+        "/__dash/dash_expense",
+        "/__dash/dash_income",
+        "/__dash/dash_loan"
+      ]
     },
-    "/dashboard": {
-      "filePath": "r$dashboard.tsx"
+    "/__transaction": {
+      "filePath": "r$__transaction.tsx",
+      "children": [
+        "/__transaction/",
+        "/__transaction/income",
+        "/__transaction/loan"
+      ]
     },
-    "/income": {
-      "filePath": "r$income.tsx"
+    "/__transaction/": {
+      "filePath": "r$__transaction/r$index.tsx",
+      "parent": "/__transaction"
     },
-    "/loan": {
-      "filePath": "r$loan.tsx"
+    "/__dash/dash_expense": {
+      "filePath": "r$__dash/r$dash_expense.tsx",
+      "parent": "/__dash"
+    },
+    "/__dash/dash_income": {
+      "filePath": "r$__dash/r$dash_income.tsx",
+      "parent": "/__dash"
+    },
+    "/__dash/dash_loan": {
+      "filePath": "r$__dash/r$dash_loan.tsx",
+      "parent": "/__dash"
+    },
+    "/__transaction/income": {
+      "filePath": "r$__transaction/r$income.tsx",
+      "parent": "/__transaction"
+    },
+    "/__transaction/loan": {
+      "filePath": "r$__transaction/r$loan.tsx",
+      "parent": "/__transaction"
     }
   }
 }

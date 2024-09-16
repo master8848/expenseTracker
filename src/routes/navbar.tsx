@@ -1,10 +1,4 @@
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
+import { Menubar, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
 import { useTheme } from "@/utils/hooks/useTheme";
 import { Link } from "@tanstack/react-router";
 
@@ -12,31 +6,29 @@ const Navbar = () => {
   useTheme();
   return (
     <>
-      <Menubar className="">
+      <Menubar className="h-16">
         <MenubarMenu>
-          <MenubarTrigger>Transaction</MenubarTrigger>
+          <Link to="/">
+            <MenubarTrigger>Transaction</MenubarTrigger>
+          </Link>
+          {/*           
           <MenubarContent>
             <MenubarItem>
-            
               <Link className="py-2 px-4 text-center w-full border rounded-sm "  to="/income">Income</Link>
             </MenubarItem>
             <MenubarItem>
-            
               <Link className="py-2 px-4 text-center w-full border rounded-sm "  to="/">Expense</Link>
             </MenubarItem>
             <MenubarItem>
-            
               <Link className="py-2 px-4 text-center w-full border rounded-sm "  to="/loan">Loan</Link>
             </MenubarItem>
-          </MenubarContent>
+          </MenubarContent> */}
         </MenubarMenu>
+
         <MenubarMenu>
-          <MenubarTrigger></MenubarTrigger>
-        </MenubarMenu>
-        <MenubarMenu>
-          <MenubarTrigger>
-            <Link to="/dashboard">Dashboard</Link>
-          </MenubarTrigger>
+          <Link to="/dash_expense">
+            <MenubarTrigger>Dashboard</MenubarTrigger>
+          </Link>
         </MenubarMenu>
       </Menubar>
     </>
