@@ -1,9 +1,32 @@
-import { Menubar, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
+import useDatabaseStore from "@/app/databaseStore";
+import useThemeStore from "@/app/themeStore";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
+import { useToggle } from "@/hooks/useToggle";
 import { useTheme } from "@/utils/hooks/useTheme";
 import { Link } from "@tanstack/react-router";
 
 const Navbar = () => {
   useTheme();
+  const { theme, setTheme } = useThemeStore();
+  const { setInstantDb } = useDatabaseStore();
+  const [dialog, { setTrueOrFalse, setTrue }] = useToggle(false);
+
   return (
     <>
       <Menubar className="h-16">
@@ -11,18 +34,6 @@ const Navbar = () => {
           <Link to="/">
             <MenubarTrigger>Transaction</MenubarTrigger>
           </Link>
-          {/*           
-          <MenubarContent>
-            <MenubarItem>
-              <Link className="py-2 px-4 text-center w-full border rounded-sm "  to="/income">Income</Link>
-            </MenubarItem>
-            <MenubarItem>
-              <Link className="py-2 px-4 text-center w-full border rounded-sm "  to="/">Expense</Link>
-            </MenubarItem>
-            <MenubarItem>
-              <Link className="py-2 px-4 text-center w-full border rounded-sm "  to="/loan">Loan</Link>
-            </MenubarItem>
-          </MenubarContent> */}
         </MenubarMenu>
 
         <MenubarMenu>
@@ -30,12 +41,57 @@ const Navbar = () => {
             <MenubarTrigger>Dashboard</MenubarTrigger>
           </Link>
         </MenubarMenu>
+        <MenubarMenu>
+          <MenubarTrigger>Settings</MenubarTrigger>
+
+          <MenubarContent>
+            <MenubarItem
+              onClick={() => {
+                setTheme(
+                  theme == "system"
+                    ? "light"
+                    : theme == "dark"
+                      ? "light"
+                      : "dark"
+                );
+              }}
+            >
+              {theme == "system"
+                ? "Light Mode"
+                : theme == "dark"
+                  ? "Light Mode"
+                  : "Dark Mode"}
+            </MenubarItem>
+            <MenubarItem onClick={setTrue}>Log out</MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
       </Menubar>
+      <AlertDialog open={dialog} onOpenChange={setTrueOrFalse}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setInstantDb({ appId: null, appUri: undefined });
+              }}
+            >
+              Log out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
 
 export default Navbar;
+
 // const [openState, { setFalse, setTrue }] = useToggle();
 // <Sheet open={openState} modal >
 // <SheetTrigger asChild onClick={setTrue}>

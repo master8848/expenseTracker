@@ -4,7 +4,10 @@ import { persist } from "zustand/middleware";
 interface ThemeState {
   appId: string | null;
   appUri: undefined | string;
-  setInstantDb: (params: { appId: string; appUri: string | undefined }) => void;
+  setInstantDb: (params: {
+    appId: string | null;
+    appUri: string | undefined;
+  }) => void;
 }
 
 const useDatabaseStore = create<ThemeState>()(
@@ -16,14 +19,14 @@ const useDatabaseStore = create<ThemeState>()(
         appId,
         appUri,
       }: {
-        appId: string;
+        appId: string | null;
         appUri: string | undefined;
       }) => {
         set({ appId, appUri });
       },
     }),
-    { name: "instantDb" },
-  ),
+    { name: "instantDb" }
+  )
 );
 
 export default useDatabaseStore;
