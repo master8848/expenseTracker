@@ -1,5 +1,5 @@
 {
-  "productName": "expensetracker",
+  "productName": "Expense Tracker",
   "version": "0.1.0",
   "identifier": "com.expensetracker.app",
   "build": {
@@ -11,7 +11,7 @@
   "app": {
     "windows": [
       {
-        "title": "expensetracker",
+        "title": "Expense Tracker",
         "width": 800,
         "height": 600
       }
