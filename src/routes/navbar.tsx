@@ -18,11 +18,9 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { useToggle } from "@/hooks/useToggle";
-import { useTheme } from "@/utils/hooks/useTheme";
 import { Link } from "@tanstack/react-router";
 
 const Navbar = () => {
-  useTheme();
   const { theme, setTheme } = useThemeStore();
   const { setInstantDb } = useDatabaseStore();
   const [dialog, { setTrueOrFalse, setTrue }] = useToggle(false);

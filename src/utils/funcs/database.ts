@@ -6,7 +6,7 @@ import { init } from "@instantdb/react";
 
 // Optional: Declare your schema for intellisense!
 
-export const db = init<IDBFullSchema>({
+export let db = init<IDBFullSchema>({
   appId: useDatabaseStore.getState()?.appId ?? "",
   devtool: false,
   apiURI: useDatabaseStore.getState()?.appUri ?? "",
@@ -14,3 +14,13 @@ export const db = init<IDBFullSchema>({
 db._core.subscribeQuery({ loan: {} }, (...arg) => {
   console.log(...arg);
 });
+export function updateDb() {
+  db = init<IDBFullSchema>({
+    appId: useDatabaseStore.getState()?.appId ?? "",
+    devtool: false,
+    apiURI: useDatabaseStore.getState()?.appUri ?? "",
+  });
+  db._core.subscribeQuery({ loan: {} }, (...arg) => {
+    console.log(...arg);
+  });
+}

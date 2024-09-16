@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -31,16 +32,22 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function DbCredentialsForm() {
   const { setInstantDb } = useDatabaseStore((c) => c);
+  const navigate = useNavigate();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      applicationId: "",
+      applicationId: import.meta.env.DEV
+        ? (import.meta.env.VITE_INSTANT_APP_ID ?? "")
+        : "",
       hostedUrl: undefined,
     },
   });
 
   // Handle form submission
   const onSubmit = (data: FormData) => {
+    navigate({
+      to: "/",
+    });
     setInstantDb({ appId: data.applicationId, appUri: data.hostedUrl });
   };
 

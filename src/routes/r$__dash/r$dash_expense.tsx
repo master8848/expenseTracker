@@ -4,6 +4,16 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import DashboardError from "@/components/development/dashboardError";
 import ExpenseForm from "@/components/development/expenseForm";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
@@ -15,17 +25,19 @@ import {
 } from "@/components/ui/sheet";
 import { CURRENCY, PAGE_SIZE } from "@/utils/consts/common";
 import { DATE_FORMAT } from "@/utils/consts/dateFormat";
+import { tx } from "@instantdb/react";
 import { EyeOpenIcon, Pencil2Icon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
+import { Trash2 } from "lucide-react";
 import { DateTime } from "luxon";
 import { useCallback, useMemo, useState } from "react";
-
 export const Route = createFileRoute("/__dash/dash_expense")({
   component: DashboardExpense,
 });
+type actionType = "none" | "edit" | "view" | "delete";
 const defaultActionData = (): {
   id: string;
-  action: "none" | "edit" | "view";
+  action: actionType;
   data: Record<string, any>;
 } => ({
   id: "",
@@ -87,7 +99,7 @@ function DashboardExpense() {
         cell: ({ row }) => (
           <div>
             {DateTime.fromJSDate(new Date(row.getValue("date"))).toFormat(
-              DATE_FORMAT,
+              DATE_FORMAT
             )}
           </div>
         ),
@@ -98,7 +110,7 @@ function DashboardExpense() {
         cell: ({ row }) => (
           <div>
             {DateTime.fromJSDate(new Date(row.getValue("updated_at"))).toFormat(
-              DATE_FORMAT,
+              DATE_FORMAT
             )}
           </div>
         ),
@@ -148,8 +160,21 @@ function DashboardExpense() {
                   })
                 }
               >
-                {" "}
                 <EyeOpenIcon />
+              </Button>
+              <Button
+                variant="outline"
+                className="py-4 px-3"
+                onClick={() =>
+                  setActionWithData({
+                    action: "delete",
+                    id: currentItemId,
+                    data: row.original,
+                  })
+                }
+                title="Delete"
+              >
+                <Trash2 size={15} strokeWidth={2} />
               </Button>
             </>
           );
@@ -187,13 +212,13 @@ function HandleEditAndView({
   setActionWithData: React.Dispatch<
     React.SetStateAction<{
       id: string;
-      action: "none" | "edit" | "view";
+      action: actionType;
       data: Record<string, any>;
     }>
   >;
   actionWithData: {
     id: string;
-    action: "none" | "edit" | "view";
+    action: actionType;
     data: Record<string, any>;
   };
 }) {
@@ -245,7 +270,7 @@ function HandleEditAndView({
             <p>
               <strong>Date:</strong>{" "}
               {DateTime.fromJSDate(new Date(actionWithData.data.date)).toFormat(
-                DATE_FORMAT,
+                DATE_FORMAT
               )}
             </p>
             <p>
@@ -265,6 +290,32 @@ function HandleEditAndView({
           </Card>
         </SheetContent>
       </Sheet>
+      {/* delete */}
+      <AlertDialog
+        open={actionWithData.action === "delete"}
+        onOpenChange={(open) => {
+          if (!open) setActionWithData(defaultActionData);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone.Data will be lost for ever
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                db.transact([tx.expense[actionWithData.id].delete()]);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
